@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2021 at 08:40 AM
--- Server version: 10.1.37-MariaDB
--- PHP Version: 7.1.24
+-- Generation Time: Jun 26, 2024 at 04:36 PM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 7.3.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -95,10 +94,7 @@ CREATE TABLE `peminjaman` (
 --
 
 INSERT INTO `peminjaman` (`id_pm`, `id_anggota`, `id_buku`, `tgl_pinjam`, `tgl_kembali`) VALUES
-('PM001', 'AG002', 'BK005', '2021-07-10', '2021-07-17'),
-('PM002', 'AG003', 'BK005', '2021-07-15', '2021-07-22'),
-('PM003', 'AG004', 'BK008', '2021-07-18', '2021-07-25'),
-('PM004', 'AG004', 'BK013', '2021-07-18', '2021-07-25');
+('PM004', 'AG004', 'BK013', '2024-05-18', '2024-05-25');
 
 -- --------------------------------------------------------
 
@@ -173,30 +169,11 @@ CREATE TABLE `pengembalian` (
 --
 
 INSERT INTO `pengembalian` (`id_pengembalian`, `id_anggota`, `id_buku`, `tgl_pinjam`, `tgl_kembali`, `tgl_pengembalian`) VALUES
-(1, 'AG002', 'BK004', '2021-07-01', '2021-07-08', '2021-07-12'),
-(2, 'AG003', 'BK005', '2021-07-02', '2021-07-09', '2021-07-14');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `nama` varchar(50) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `level` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `nama`, `username`, `password`, `level`) VALUES
-(1, 'Admin', 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Administrator'),
-(2, 'Arif', 'arif', '827ccb0eea8a706c4c34a16891f84e7b', 'Petugas');
+(1, 'AG002', 'BK004', '2024-05-01', '2024-05-08', '2024-05-12'),
+(2, 'AG003', 'BK005', '2024-05-02', '2024-05-09', '2024-05-14'),
+(3, 'AG002', 'BK005', '2024-05-10', '2024-05-17', '2024-06-26'),
+(4, 'AG004', 'BK008', '2024-05-18', '2024-05-25', '2024-06-26'),
+(5, 'AG003', 'BK005', '2024-05-15', '2024-05-22', '2024-06-26');
 
 --
 -- Indexes for dumped tables
@@ -212,13 +189,17 @@ ALTER TABLE `anggota`
 -- Indexes for table `buku`
 --
 ALTER TABLE `buku`
-  ADD PRIMARY KEY (`id_buku`);
+  ADD PRIMARY KEY (`id_buku`),
+  ADD KEY `fk_buku_pengarang` (`id_pengarang`),
+  ADD KEY `fk_buku_penerbit` (`id_penerbit`);
 
 --
 -- Indexes for table `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  ADD PRIMARY KEY (`id_pm`);
+  ADD PRIMARY KEY (`id_pm`),
+  ADD KEY `fk_peminjaman_anggota` (`id_anggota`),
+  ADD KEY `fk_peminjaman_buku` (`id_buku`);
 
 --
 -- Indexes for table `penerbit`
@@ -236,13 +217,9 @@ ALTER TABLE `pengarang`
 -- Indexes for table `pengembalian`
 --
 ALTER TABLE `pengembalian`
-  ADD PRIMARY KEY (`id_pengembalian`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_pengembalian`),
+  ADD KEY `fk_pengembalian_anggota` (`id_anggota`),
+  ADD KEY `fk_pengembalian_buku` (`id_buku`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -264,13 +241,32 @@ ALTER TABLE `pengarang`
 -- AUTO_INCREMENT for table `pengembalian`
 --
 ALTER TABLE `pengembalian`
-  MODIFY `id_pengembalian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_pengembalian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `users`
+-- Constraints for dumped tables
 --
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for table `buku`
+--
+ALTER TABLE `buku`
+  ADD CONSTRAINT `fk_buku_penerbit` FOREIGN KEY (`id_penerbit`) REFERENCES `penerbit` (`id_penerbit`),
+  ADD CONSTRAINT `fk_buku_pengarang` FOREIGN KEY (`id_pengarang`) REFERENCES `pengarang` (`id_pengarang`);
+
+--
+-- Constraints for table `peminjaman`
+--
+ALTER TABLE `peminjaman`
+  ADD CONSTRAINT `fk_peminjaman_anggota` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id_anggota`),
+  ADD CONSTRAINT `fk_peminjaman_buku` FOREIGN KEY (`id_buku`) REFERENCES `buku` (`id_buku`);
+
+--
+-- Constraints for table `pengembalian`
+--
+ALTER TABLE `pengembalian`
+  ADD CONSTRAINT `fk_pengembalian_anggota` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id_anggota`),
+  ADD CONSTRAINT `fk_pengembalian_buku` FOREIGN KEY (`id_buku`) REFERENCES `buku` (`id_buku`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
