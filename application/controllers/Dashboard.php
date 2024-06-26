@@ -9,7 +9,6 @@ class Dashboard extends CI_Controller{
   }
 
   public function index(){
-    $this->security_model->getSecurity();
     $data['content'] = 'home';
     $data['title']   = 'Dashboard';
     $data['anggota'] = $this->dashboard_model->countAnggota();
